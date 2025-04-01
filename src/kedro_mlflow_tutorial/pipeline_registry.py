@@ -24,8 +24,11 @@ def register_pipelines() -> Dict[str, Pipeline]:
 
     ml_pipeline = create_ml_pipeline()
     inference_pipeline = ml_pipeline.only_nodes_with_tags("inference")
+    training_pipeline = ml_pipeline.only_nodes_with_tags("training")
+    
+    # Builds up training_ml pipeline with the whole thing: train + inference
     training_pipeline_ml = pipeline_ml_factory(
-        training=ml_pipeline.only_nodes_with_tags("training"),
+        training=training_pipeline,
         inference=inference_pipeline,
         input_name="instances",
         log_model_kwargs=dict(
